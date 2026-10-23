@@ -1,0 +1,41 @@
+FROM python:3.14-slim-bookworm
+
+ARG LANGFLOW_VERSION=1.12.6
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONIOENCODING=UTF-8 \
+    LANGFLOW_HOST=0.0.0.0 \
+    LANGFLOW_PORT=7860 \
+    LANGFLOW_AUTO_LOGIN=false \
+    HOME=/app/data \
+    PATH=/app/.venv/bin:$PATH
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        curl \
+        git \
+        libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+RUN python -m venv /app/.venv \
+    && pip install --upgrade pip setuptools wheel \
+    && pip install "langflow==${LANGFLOW_VERSION}"
+
+RUN mkdir -p /app/data \
+    && groupadd --gid 1000 langflow \
+    && useradd \
+        --uid 1000 \
+        --gid langflow \
+        --home-dir /app/data \
+        --shell /usr/sbin/nologin \
+        langflow \
+    && chown -R langflow:langflow /app
+
+USER langflow
+
+EXPOSE 7860
+
+CMD ["langflow", "run"]
