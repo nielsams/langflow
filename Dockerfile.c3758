@@ -23,7 +23,7 @@ WORKDIR /app
 RUN python -m venv /app/.venv \
     && pip install --upgrade pip setuptools wheel \
     && pip install \
-        "langflow==${LANGFLOW_VERSION}" \
+        "langflow[pgvector]==${LANGFLOW_VERSION}" \
         psycopg2 \
         psycopg
 
