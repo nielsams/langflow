@@ -22,8 +22,10 @@ WORKDIR /app
 
 RUN python -m venv /app/.venv \
     && pip install --upgrade pip setuptools wheel \
-    && pip install "langflow==${LANGFLOW_VERSION}" \
-    && pip install psycopg2
+    && pip install \
+        "langflow==${LANGFLOW_VERSION}" \
+        psycopg2 \
+        psycopg
 
 RUN mkdir -p /app/data \
     && groupadd --gid 1000 langflow \
